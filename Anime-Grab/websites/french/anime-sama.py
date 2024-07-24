@@ -1,12 +1,12 @@
 import re,requests,sys,os,time
 from typing import Literal,List,Optional
-import downloader
-import extractors
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))) # to import from grandparent directory
+from downloader import downloader
+from extractors import sibnet_extract
 
 
 class anime_sama():
     def __init__(self,
-                 url:str = None,
                  resolution:Optional[Literal['high','mid','low']]=None,
                  preferred_source_order:List[Literal['sibnet.ru','sendvid.com','yourvid.com','vk.com','vidmoly.to']]=['sibnet.ru','sendvid.com','yourvid.com','vk.com','vidmoly.to'],
                  preferred_version:Literal['vf','vo']='vf',
@@ -20,7 +20,6 @@ class anime_sama():
             self.language = preferred_version
             self.resolution =  resolution
             self.path = path_to_download.strip('/')
-            os.makedirs(path_to_download,exist_ok=True)
             self.episode_count = None
 
     def verify_url(self,url):
@@ -96,14 +95,12 @@ class anime_sama():
 
         if mode == 'print':
             for elt in exts:
-                print(elt[0])
+                print(elt)
         else:
+            os.makedirs(self.path,exist_ok=True)
             file = f'{self.path}/{time.time()}.txt'
             for url in exts:
                 with open(file,'a+',encoding='utf-8') as f:
                     f.write(url+'\n')
             
             print(f'File generated at {file}')
-
-a = anime_sama(preferred_version='vf',preferred_source_order=['sibnet.ru','vk.com'])
-print(a.extract('https://anime-sama.fr/catalogue/rent-a-girlfriend/saison1/vostfr/',mode='txt'))
