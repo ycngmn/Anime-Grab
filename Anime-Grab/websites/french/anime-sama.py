@@ -1,13 +1,13 @@
 import re,requests,sys,os,time
-from typing import Literal,List,Optional
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))) # to import from grandparent directory
+from typing import Literal,List
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))) # to import from grandpa directory
 from downloader import downloader
 from extractors import sibnet_extract
 
 
 class anime_sama():
     def __init__(self,
-                 resolution:Optional[Literal['high','mid','low']]=None,
+                 resolution:Literal['high','mid','low']=None,
                  preferred_source_order:List[Literal['sibnet.ru','sendvid.com','yourvid.com','vk.com','vidmoly.to']]=['sibnet.ru','sendvid.com','yourvid.com','vk.com','vidmoly.to'],
                  preferred_version:Literal['vf','vo']='vf',
                  path_to_download=r'./aniloads/anime-sama',
@@ -23,15 +23,40 @@ class anime_sama():
             self.episode_count = None
 
     def verify_url(self,url):
-        if re.match(r"https://anime-sama\.fr/catalogue/.*",url):
+        
+        if re.match(r"^(https:\/\/)?(www\.)?anime-sama\.fr\/catalogue\/[^\/]+\/[^\/]+\/(vostfr|vf)\/?$",url):  # match - ex: anime-sama.fr/catalogue/example/saison1/vf
             if requests.get(url).status_code==200:
                 return url
-        return None
+        if re.match(r"^(https?:\/\/)?(www\.)?anime-sama\.fr\/catalogue\/[^\/]+\/?$",url):
+            a = requests.get(url)
+            if a.status_code==200:
+                web = a.text
+                res = re.findall(r'panneauAnime\("([^"]*Saison[^"]*)", "([^"]+)"\);',web)
+                dic = {name:url for name,url in res}
+
+                if len(dic)>1:
+                
+                    count,txt = 1,""
+                    for k in dic:
+                        txt+=f"{count}. {k}\n"
+                        count+=1
+
+                    get = input("Please give the value of the season you want to process :\n"+txt)
+                    while not isinstance(get,int) and (get>len(dic) or get<0) :
+                        get = input("Wrorng value! Please enter a number corresponding to season's : ")
+                    
+                else:
+                    get = 1
+
+                print(f"Selected the Season {get}.")
+                    
+                return url.strip('/')+'/'+list(dic.values())[get-1]
     
     def __fetch(self,url):
          
-         url = url if url[-1]=='/' else url+'/'
-         if self.verify_url(url):
+         url = self.verify_url(url)
+         print('\n'+url)
+         if url:
             if 'vostfr' in url or 'vf' in url:  
                 if self.language == 'vf' and 'vf' not in url:
                     if requests.get(url.replace('vostfr','vf')).status_code==200:
@@ -39,38 +64,51 @@ class anime_sama():
                     
             web = requests.get(url).text
             episode_attr = re.search('episodes\.js\?filever=\d+',web).group(0)
+            url = url if url[-1]=='/' else url+'/'
             res = requests.get(url+episode_attr).text
             
             urls = re.findall(re.compile(r"https?://[^\s\"']+"),res)
 
             for i in range(len(self.source)):
                 pref_list = [link for link in urls if self.source[i] in link] 
-                if pref_list:                    
+                if pref_list: 
+                    print(f"\n{len(pref_list)} {self.language} episodes found from {self.source[i]}!\n")                   
                     return pref_list
-                else:
-                     print("Sorry, couldn't find any extractable sources")
-                     sys.exit()
-         
-    def validate_range(self,range):
-        
-        if isinstance(range,int) and range<=self.episode_count:
-            return (range-1,range)
-        elif isinstance(range,tuple):
-            a,b = range
-            if isinstance(a,int):
-                if b == None and a<=self.episode_count:
-                    return (a-1,a)
-                if isinstance(b,int) and a<b and b<=self.episode_count:
-                    return (a-1,b)
-                else:
-                    print(f"The range format is not corrent.\nThe numbers should be between 1 and {self.episode_count}")
-                    sys.exit()
-        elif range == None:
-            return (None,None)
-
-        else:
-            print(f"The range format is not corrent.\nThe numbers should be between 1 and {self.episode_count}")
+            print("Sorry, couldn't find any extractable sources")
             sys.exit()
+         
+    def validate_range(self, range):
+        
+        def invalid_range_error():
+            print(f"The range format is not correct.\nThe numbers should be between 1 and {self.episode_count}")
+            sys.exit()
+
+        if range == None:
+            return (None, None)
+
+        if isinstance(range, int):
+            if range <= self.episode_count:
+                return (range - 1, range)
+            invalid_range_error()
+
+        if isinstance(range, tuple):
+            a, b = range
+            if isinstance(a, int):
+                if b is None and a <= self.episode_count:
+                    return (a - 1, a)
+                if isinstance(b, int) and a < b and b <= self.episode_count:
+                    return (a - 1, b)
+                if b == a and a <= self.episode_count:
+                    return (a - 1, a)     
+                if b == 'end':
+                    return (a - 1, self.episode_count)
+            if a == 'start':
+                if b == 'end':
+                    return (None, None)
+                if isinstance(b, int) and b <= self.episode_count:
+                    return (0, b)
+            invalid_range_error()
+        invalid_range_error()
     
     def download(self,url,range=None,name=None,folder:str=None):
         
@@ -79,7 +117,8 @@ class anime_sama():
         range = self.validate_range(range)
         pref_list = pref_list[range[0]:range[1]]
 
-        if folder: path = self.path+f'/{folder}'
+        if folder: 
+            path = self.path+f'/{folder}'
         
         downloader(pref_list,path=path,name=name,resolution=self.resolution)
         
@@ -91,12 +130,12 @@ class anime_sama():
         range = self.validate_range(range)
         pref_list = pref_list[range[0]:range[1]]
 
-        exts = [sibnet_extract(url)[0] for url in pref_list]
-
+        
         if mode == 'print':
-            for elt in exts:
-                print(elt)
+            for url in pref_list:
+                print(sibnet_extract(url)[0]) 
         else:
+            exts = [sibnet_extract(url)[0] for url in pref_list]
             os.makedirs(self.path,exist_ok=True)
             file = f'{self.path}/{time.time()}.txt'
             for url in exts:
