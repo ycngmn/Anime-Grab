@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime-Grab | Scrap and download animes from sources</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='Anime-Grab-logo.jpeg') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ion-rangeslider/css/ion.rangeSlider.min.css"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="logo">
+        <img src="{{ url_for('static', filename='Anime-Grab-logo-removebg.png') }}" alt="Anime-Grab-logo" oncontextmenu="return false;" height="220px" width="220px" />
+    </header>
+
+    <input id="anime-url" class="input-url" type="text" placeholder="Please enter the anime-sama url" pattern="^(https:\/\/)?(www\.)?anime-sama\.fr\/catalogue\/[^\/]+\/[^\/]+\/(vostfr|vf)\/?$" required></input>
+
+    <span class="download-example">Example: https://anime-sama.fr/catalogue/one-piece/saison1/vostfr/</span>
+    
+    <div class="button-container">
+        <button id="download-btn" class="btn-download">
+            <img name="download-logo" src="{{ url_for('static', filename='download-logo.png') }}" alt="download-logo" height="18"/>
+            <span>Download</span>
+        </button>
+        <button id="filter-btn" class="btn-filter">
+            <img name="download-logo" src="{{ url_for('static', filename='filter_logo.png') }}" alt="download-logo" height="14"/>
+        </button>
+    </div>
+
+    <div id="filter-menu" class="filter-menu">
+        <div class="range-container">
+            <span>Range
+                <span class="info-container"><span class="info-icon" tabindex="0"></span>
+                    <span id="tooltip">Episode range selector. Select a number to download single episode.<br/>Leave it default to download whole season. Range must be coherent.</span>
+                </span>
+            </span>
+            <input type="text" class="js-range-slider" name="my_range" value="" data-type="double" data-min="1" data-max="50" data-step="1"/>       
+        </div>
+
+        <div class="checkbox-group">
+            <label>Quality :</label>
+            <label><input type="checkbox" id="quality" value="high" checked> High</label>
+            <label><input type="checkbox" id="quality" value="mid"> Mid</label>
+            <label><input type="checkbox" id="quality" value="low"> Low</label>
+        </div>
+        
+        <div class="checkbox-group">
+            <label>Version :</label>
+            <label><input type="checkbox" id="version" value="vf" checked> Français</label>
+            <label><input type="checkbox" id="version" value="vo"> Originel</label>
+        </div>
+    </div>
+
+    <div id="download-menu" class="download-menu"><p></p></div>
+
+    <footer>
+        <span style="color: rgb(203, 203, 203)">Made with ❤️ by <a href="https://github.com/ycngmn" target="_blank" style="color:#00aeff">ycngmn</a> |</span>
+        <a href="https://github.com/ycngmn/Anime-Grab" target="blank">
+            <img src="{{ url_for('static', filename='github_logo_transparent.png') }}" alt="github_logo_transparent" height="30px" />
+        </a>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ion-rangeslider/js/ion.rangeSlider.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,336 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+body {
+    background: linear-gradient(135deg, #04080e, #141c34, #45257b);
+    display: flex;
+    flex-direction: column; 
+    align-items: center;  
+    font-family: system-ui;
+}
+
+
+/*Slider credit: https://codepen.io/Studio_bidibou/pen/GRJMRVL*/
+.irs--round .irs-handle {
+    top: 26px;
+    width: 20px;
+    height: 20px;
+    border: 4px solid #c6A554;
+    background-color: white;
+    border-radius: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,255,0.3);
+    cursor: pointer;
+}
+.irs--round .irs-bar {
+    top: 31px;
+    height: 10px;
+    background-color: #c6A554;
+}
+.irs--round .irs-from, .irs--round .irs-to, .irs--round .irs-single {
+    font-size: 14px;
+    line-height: 1;
+    text-shadow: none;
+    padding: 3px 5px;
+    background-color: #c6A554;
+    color: white;
+    border-radius: 4px;
+}
+
+
+.irs--round .irs-line {
+    top: 31px;
+    height: 10px;
+    background-color: #F2EBE8;
+    border-radius: 4px;
+}
+.irs--round .irs-min, .irs--round .irs-max {
+    color: #111111;
+    font-family: 'raleway';
+    font-size: 14px;
+    top: 0;
+    padding: 3px 5px;
+    background-color: white;
+    border-radius: 4px;
+}
+.irs--round .irs-from:before, .irs--round .irs-to:before, .irs--round .irs-single:before {
+    position: absolute;
+    display: block;
+    content: "";
+    bottom: -6px;
+    left: 50%;
+    width: 0;
+    height: 0;
+    margin-left: -3px;
+    overflow: hidden;
+    border: 3px solid transparent;
+    border-top-color: #c6A554;
+}
+.irs--round {
+    width: 280px;
+};
+/*Slider end*/
+
+
+
+.logo {
+    margin-top: 10px;
+    min-height: 220px;
+    min-width: 220px;
+}
+
+.input-url {
+    margin-top: 20px;
+    color: rgb(204, 11, 11);
+    font-size: 1rem;
+    line-height: 1;
+    border-style: none;
+    outline: none;
+    height: 50px;
+    min-height: 50px;
+    width: 250px;
+    min-width: 250px;
+    padding: 0.8em 1em;
+    border: 0.25em solid transparent;
+    background-image: linear-gradient(#000, #000),
+    linear-gradient(120deg, #f09 0%, #0ff 50%, #007BFF 100%);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    border-radius: 1.8em;
+    background-size: 200% 100%;
+    transition: background-position 0.8s ease-out, color 0.8s ease-out;
+}
+
+.input-url:hover {
+    background-position: 100% 0;  
+}
+
+.download-example{
+    color: white; 
+    font-size: 14px;
+    margin-top: 2%;
+}
+
+.button-container {
+    display: flex;
+    gap: 2%;
+}
+
+.btn-download {
+    background-image: linear-gradient(to right, #6441A5 0%, #2a0845  51%, #6441A5  100%);
+    margin: 20px 0px;
+    margin-right: 1px;
+    min-height: 20px;
+    padding: 10px 20px;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: 'Trebuchet MS';
+    font-size: small;
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: white;            
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    cursor: not-allowed;
+}
+
+.btn-download.enabled {
+    cursor: pointer;
+}
+
+.btn-download:hover {
+    background-position: right center;
+    color: #fff;
+    text-decoration: none;
+}
+
+.btn-filter {
+    background-image: linear-gradient(to right, #00bf8f 0%, #001510  51%, #00bf8f  100%);
+    margin: 22px 0px;
+    min-height: 22px;
+    margin-left: 1px;
+    padding: 10px 20px;
+    text-align: center;
+    text-transform: uppercase;
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: white;            
+    border-radius: 10px;
+    display: block;
+    cursor: pointer;
+}
+
+.btn-filter.disabled{
+    cursor: not-allowed;
+}
+
+.btn-filter:hover {
+    background-position: right center; 
+    color: #fff;
+    text-decoration: none;
+}
+
+.filter-menu {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #00bf8f, #001510);
+    padding: 20px;
+    border-radius: 10px;
+    color: white;
+    width: 300px;
+   
+}
+
+.download-menu {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #2a0845, #001510);
+    padding: 20px;
+    border-radius: 10px;
+    color: white;
+    width: 300px;
+    height: 250px ;
+    max-height: 250px;
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.download-menu p {
+    white-space: nowrap; /* Prevent text from wrapping */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Add ellipsis to overflowing text */
+    margin-bottom: 10px; /* Add distance between lines */
+}
+
+.download-menu p a {
+    color: white; /* Link color */
+    text-decoration: none; /* Remove underline from link */
+}
+
+.download-menu p a:hover {
+    text-decoration: underline; /* Underline link on hover */
+}
+
+.download-menu button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.filter-menu label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+
+
+
+.filter-menu .checkbox-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.filter-menu .checkbox-group input {
+    margin-left: 10px;
+}
+
+.filter-menu .checkbox-group input[type="checkbox"] {
+    transform: scale(1);
+}
+
+.filter-menu .range-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.info-container {
+    display: inline-block;
+    position: relative;
+}
+
+.info-icon {
+    display: inline-block;
+    margin-left: 5px;
+    cursor: pointer;
+    color: rgb(255, 234, 0);
+    font-size: 0.8em;
+    vertical-align: super;
+}
+
+.info-icon::after {
+    content: 'ℹ';
+}
+
+#tooltip {
+    display: none;
+    position: absolute;
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
+    border-radius: 4px;
+    font-size: 12px;
+    z-index: 1000;
+    top: -5px;
+    left: 100%;
+    margin-left: 10px;
+    white-space: nowrap;
+}
+
+.info-icon:hover + #tooltip,
+.info-icon:focus + #tooltip,
+.info-icon:active + #tooltip {
+    display: block;
+}
+footer {
+    display: flex; 
+    align-items: center;
+    gap: 12px;
+    position:fixed;
+    bottom: 2%;
+}
+
+@media only screen and (max-width: 768px) {
+    footer {
+        margin-top: 60%;
+    }
+    .input-url {
+        width: 280px;
+        height:75px;
+        max-height: 75px;
+    }
+
+    .filter-menu .checkbox-group input[type="checkbox"] {
+        width: auto;
+        height: auto;
+    }
+
+    .download-example{
+        font-size: 11px;
+        margin-top: 5%;
+    }
+    
+}

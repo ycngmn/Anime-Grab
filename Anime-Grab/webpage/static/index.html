@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime-Grab | Scrap and download animes from sources</title>
+    <link rel="icon" type="image/x-icon" href="/webpage/static/Anime-Grab-logo.jpeg">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ion-rangeslider/css/ion.rangeSlider.min.css"/>
+    <style>
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        body {
+            background: linear-gradient(135deg, #04080e, #141c34, #45257b);
+            display: flex;
+            flex-direction: column; 
+            align-items: center;  
+            font-family: system-ui;
+        }
+
+
+        /*Slider credit: https://codepen.io/Studio_bidibou/pen/GRJMRVL*/
+        .irs--round .irs-handle {
+            top: 26px;
+            width: 20px;
+            height: 20px;
+            border: 4px solid #c6A554;
+            background-color: white;
+            border-radius: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,255,0.3);
+            cursor: pointer;
+        }
+        .irs--round .irs-bar {
+            top: 31px;
+            height: 10px;
+            background-color: #c6A554;
+        }
+        .irs--round .irs-from, .irs--round .irs-to, .irs--round .irs-single {
+            font-size: 14px;
+            line-height: 1;
+            text-shadow: none;
+            padding: 3px 5px;
+            background-color: #c6A554;
+            color: white;
+            border-radius: 4px;
+        }
+
+
+        .irs--round .irs-line {
+            top: 31px;
+            height: 10px;
+            background-color: #F2EBE8;
+            border-radius: 4px;
+        }
+        .irs--round .irs-min, .irs--round .irs-max {
+            color: #111111;
+            font-family: 'raleway';
+            font-size: 14px;
+            top: 0;
+            padding: 3px 5px;
+            background-color: white;
+            border-radius: 4px;
+        }
+        .irs--round .irs-from:before, .irs--round .irs-to:before, .irs--round .irs-single:before {
+            position: absolute;
+            display: block;
+            content: "";
+            bottom: -6px;
+            left: 50%;
+            width: 0;
+            height: 0;
+            margin-left: -3px;
+            overflow: hidden;
+            border: 3px solid transparent;
+            border-top-color: #c6A554;
+        }
+        .irs--round {
+            width: 280px;
+        };
+        /*Slider end*/
+
+        
+
+        .logo {
+            margin-top: 10px;
+            min-height: 220px;
+            min-width: 220px;
+        }
+
+        .input-url {
+            margin-top: 20px;
+            color: rgb(204, 11, 11);
+            font-size: 1rem;
+            line-height: 1;
+            border-style: none;
+            outline: none;
+            height: 50px;
+            min-height: 50px;
+            width: 250px;
+            min-width: 250px;
+            padding: 0.8em 1em;
+            border: 0.25em solid transparent;
+            background-image: linear-gradient(#000, #000),
+            linear-gradient(120deg, #f09 0%, #0ff 50%, #007BFF 100%);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            border-radius: 1.8em;
+            background-size: 200% 100%;
+            transition: background-position 0.8s ease-out, color 0.8s ease-out;
+        }
+
+        .input-url:hover {
+            background-position: 100% 0;  
+        }
+
+        .download-example{
+            color: white; 
+            font-size: 14px;
+            margin-top: 2%;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 2%;
+        }
+
+        .btn-download {
+            background-image: linear-gradient(to right, #6441A5 0%, #2a0845  51%, #6441A5  100%);
+            margin: 20px 0px;
+            margin-right: 1px;
+            min-height: 20px;
+            padding: 10px 20px;
+            text-align: center;
+            text-transform: uppercase;
+            font-family: 'Trebuchet MS';
+            font-size: small;
+            transition: 0.5s;
+            background-size: 200% auto;
+            color: white;            
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            cursor: not-allowed;
+        }
+
+        .btn-download.enabled {
+            cursor: pointer;
+        }
+
+        .btn-download:hover {
+            background-position: right center;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .btn-filter {
+            background-image: linear-gradient(to right, #00bf8f 0%, #001510  51%, #00bf8f  100%);
+            margin: 22px 0px;
+            min-height: 22px;
+            margin-left: 1px;
+            padding: 10px 20px;
+            text-align: center;
+            text-transform: uppercase;
+            transition: 0.5s;
+            background-size: 200% auto;
+            color: white;            
+            border-radius: 10px;
+            display: block;
+        }
+
+        .btn-filter:hover {
+            background-position: right center; 
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .filter-menu {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #2a0845, #001510);
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            width: 300px;
+           
+        }
+
+        .filter-menu label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+
+
+
+        .filter-menu .checkbox-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .filter-menu .checkbox-group input {
+            margin-left: 10px;
+        }
+
+        .filter-menu .checkbox-group input[type="checkbox"] {
+            transform: scale(1);
+        }
+
+        .filter-menu .range-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .info-container {
+            display: inline-block;
+            position: relative;
+        }
+
+        .info-icon {
+            display: inline-block;
+            margin-left: 5px;
+            cursor: pointer;
+            color: rgb(255, 234, 0);
+            font-size: 0.8em;
+            vertical-align: super;
+        }
+
+        .info-icon::after {
+            content: 'ℹ';
+        }
+
+        #tooltip {
+            display: none;
+            position: absolute;
+            background-color: #333;
+            color: #fff;
+            padding: 5px;
+            border-radius: 4px;
+            font-size: 12px;
+            z-index: 1000;
+            top: -5px;
+            left: 100%;
+            margin-left: 10px;
+            white-space: nowrap;
+        }
+
+        .info-icon:hover + #tooltip,
+        .info-icon:focus + #tooltip,
+        .info-icon:active + #tooltip {
+            display: block;
+        }
+        footer {
+            display: flex; 
+            align-items: center;
+            gap: 12px;
+            margin-top: 12vh;
+            position:relative
+        }
+
+        @media only screen and (max-width: 768px) {
+            footer {
+                margin-top: 60%;
+            }
+            .input-url {
+                width: 280px;
+                height:75px;
+            }
+
+            .filter-menu .checkbox-group input[type="checkbox"] {
+                width: auto;
+                height: auto;
+            }
+
+            .download-example{
+                font-size: 11px;
+                margin-top: 5%;
+            }
+            
+        }
+    </style>
+</head>
+<body>
+    <header class="logo">
+        <img src="../static/Anime-Grab-logo-removebg.png" alt="Anime-Grab-logo" oncontextmenu="return false;" height="220px" width="220px" />
+    </header>
+
+    <input id="anime-url" class="input-url" type="text" placeholder="Please enter the anime-sama url" pattern="^(https:\/\/)?(www\.)?anime-sama\.fr\/catalogue\/[^\/]+\/[^\/]+\/(vostfr|vf)\/?$" required></input>
+
+    <span class="download-example">Example: https://anime-sama.fr/catalogue/one-piece/saison1/vostfr/</span>
+    
+    <div class="button-container">
+        <button id="download-btn" class="btn-download">
+            <img name="download-logo" src="../static/download-logo.png" alt="download-logo" height="18"/>
+            <span>Download</span>
+        </button>
+        <button id="filter-btn" class="btn-filter">
+            <img name="download-logo" src="../static/filter_logo.png" alt="download-logo" height="14"/>
+        </button>
+    </div>
+
+    <div id="filter-menu" class="filter-menu">
+        <div class="range-container">
+    <span>Range
+    <span class="info-container"><span class="info-icon" tabindex="0"></span>
+        <span id="tooltip">Episode range selector. Select a number to download single episode.<br/>Leave it default to download whole season. Range must be coherent.</span>
+    </span></span>
+        <input type="text" class="js-range-slider" name="my_range" value="" data-type="double" data-min="1" data-max="50" data-step="1"/>       
+         <!-- Include jQuery -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Include ionRangeSlider JS -->
+        <script src="https://cdn.jsdelivr.net/npm/ion-rangeslider/js/ion.rangeSlider.min.js"></script>
+
+        </div>
+        <div class="checkbox-group">
+            <label>Quality :</label>
+            <label><input type="checkbox" id="quality" value="high" checked> High</label>
+            <label><input type="checkbox" id="quality" value="mid"> Mid</label>
+            <label><input type="checkbox" id="quality" value="low"> Low</label>
+        </div>
+        
+        <div class="checkbox-group">
+            <label>Version :</label>
+            <label><input type="checkbox" id="version" value="vf" checked> Français</label>
+            <label><input type="checkbox" id="version" value="vo"> Originel</label>
+        </div>
+    </div>
+
+    <footer>
+        <span style="color: rgb(203, 203, 203)">Made with ❤️ by <a href="https://github.com/ycngmn" target="_blank" style="color:#00aeff">ycngmn</a> |</span>
+        <a href="https://github.com/ycngmn/Anime-Grab" target="blank">
+            <img src="../static/github_logo_transparent.png" alt="github_logo_transparent" height="30px" />
+        </a>
+    </footer>
+
+    <script>
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const input = document.getElementById('anime-url');
+        const downloadBtn = document.getElementById('download-btn');
+        const filterBtn = document.getElementById('filter-btn');
+        const filterMenu = document.getElementById('filter-menu');
+        
+        input.addEventListener('input', function() {
+            const inputValue = input.value;
+            const pattern = /^(https:\/\/)?(www\.)?anime-sama\.fr\/catalogue\/[^\/]+\/[^\/]+\/(vostfr|vf)\/?$/;
+            
+            if (pattern.test(inputValue)) {
+                downloadBtn.classList.add('enabled');
+                input.style.color = 'white';
+            } else {
+                downloadBtn.classList.remove('enabled');
+                input.style.color = 'rgb(204, 11, 11)';
+            }
+        });
+
+        filterBtn.addEventListener('click', function(event) {
+                event.stopPropagation();
+                filterMenu.style.display = filterMenu.style.display === 'none' || filterMenu.style.display === '' ? 'block' : 'none';
+            });
+
+            document.addEventListener('click', function(event) {
+                if (!filterMenu.contains(event.target) && event.target !== filterBtn) {
+                    filterMenu.style.display = 'none';
+                }
+            });
+
+            filterMenu.addEventListener('click', function(event) {
+                event.stopPropagation();
+            });
+
+  
+        document.querySelectorAll('.checkbox-group').forEach(group => {
+        group.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    group.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                        if (cb !== this) {
+                            cb.checked = false;
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+     downloadBtn.addEventListener('click', function() {
+
+        if (downloadBtn.classList.contains('enabled')) {
+            // Get range slider values
+            const rangeSlider = $(".js-range-slider").data("ionRangeSlider");
+            const rangeValues = rangeSlider.result;
+
+            // Get selected quality
+            const selectedQuality = document.querySelector('input[id="quality"]:checked').value;
+
+            // Get selected version
+            const selectedVersion = document.querySelector('input[id="version"]:checked').value;
+
+            // Log the values
+            alert('Range: ' + rangeValues.from + ' - ' + rangeValues.to);
+            alert('Quality: ' + selectedQuality);
+            alert('Version: ' + selectedVersion);}});
+
+    $(document).ready(function() {
+            $(".js-range-slider").ionRangeSlider({
+                skin: "round",
+                type: "double",
+                min: 1,
+                max: 50,
+                step: 1,
+                from: 1,
+                to: 50,
+                prettify: function (num) {
+                    if (num === 1) return "Start";
+                    if (num === 50) return "End";
+                    return num;
+                },
+                onStart: function (data) {
+                    handleLabels(data);
+                },
+                onChange: function (data) {
+                    handleLabels(data);
+                }
+            });
+
+            function handleLabels(data) {
+                var from = data.from;
+                var to = data.to;
+
+                if (from === 1) {
+                    $(".irs-from").text("Start");
+                }
+                if (to === 50) {
+                    $(".irs-to").text("End");
+                }
+                if (from !== 1) {
+                    $(".irs-from").text(from);
+                }
+                if (to !== 50) {
+                    $(".irs-to").text(to);
+                }
+            }
+        });
+    });
+    </script>
+</body>
+</html>
