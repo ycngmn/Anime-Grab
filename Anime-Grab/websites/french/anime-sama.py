@@ -81,7 +81,7 @@ class anime_sama():
         
         def invalid_range_error():
             print(f"The range format is not correct.\nThe numbers should be between 1 and {self.episode_count}")
-            sys.exit()
+            return None
 
         if range == None:
             return (None, None)
@@ -123,7 +123,7 @@ class anime_sama():
         downloader(pref_list,path=path,name=name,resolution=self.resolution)
         
 
-    def extract(self,url,range=None,mode:Literal['print','txt']='print') :
+    def extract(self,url,range=None,mode:Literal['print','txt','return']='print') :
 
         pref_list = self.__fetch(url)
         self.episode_count = len(pref_list)
@@ -134,7 +134,7 @@ class anime_sama():
         if mode == 'print':
             for url in pref_list:
                 print(sibnet_extract(url)[0]) 
-        else:
+        if mode == 'txt':
             exts = [sibnet_extract(url)[0] for url in pref_list]
             os.makedirs(self.path,exist_ok=True)
             file = f'{self.path}/{time.time()}.txt'
@@ -143,3 +143,6 @@ class anime_sama():
                     f.write(url+'\n')
             
             print(f'File generated at {file}')
+        if mode == 'return':
+            exts = [sibnet_extract(url)[0] for url in pref_list]
+            return exts
