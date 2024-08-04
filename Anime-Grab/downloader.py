@@ -1,5 +1,3 @@
-# checklist: for m3u8 - resolution attr, name + {num} if no name
-
 from extractors import *
 import requests, os, re, m3u8
 from tqdm import tqdm
@@ -142,24 +140,34 @@ def Engine_http(url:str,path,headers={},name=None):
     full_path = os.path.join(path, filename)
     base, ext = os.path.splitext(filename)
     
-    counter = 1
+    counter = 2
     while os.path.exists(full_path):
         filename = f"{base}_{counter}{ext}"
         full_path = os.path.join(path, filename)
         counter += 1
-
+    
+    temp_path = full_path+'.temp'
+    temp_file_size = 0
+    if os.path.exists(temp_path):
+        temp_file_size = os.path.getsize(temp_path)
+    headers['Range'] = f'bytes={temp_file_size}-'
+    response = requests.get(url, headers=headers, stream=True)
+    response.raise_for_status()
     total_size = int(response.headers.get('content-length', 0))
 
     # Write the file to the custom path with progress bar
-    with open(full_path, 'wb') as file, tqdm(
-        desc=filename,
-        total=total_size,
-        unit='iB',
-        unit_scale=True,
-        unit_divisor=1024,
-    ) as bar:
-        for chunk in response.iter_content(chunk_size=8192):
-            size = file.write(chunk)
-            bar.update(size)
-
+    if temp_file_size<total_size:
+        with open(temp_path, 'wb') as file, tqdm(
+            desc=filename,
+            total=total_size,
+            initial=temp_file_size,
+            unit='iB',
+            unit_scale=True,
+            unit_divisor=1024,
+        ) as bar:
+            for chunk in response.iter_content(chunk_size=8192):
+                size = file.write(chunk)
+                bar.update(size)
+    
+    os.rename(temp_path,full_path)
     print(f"File downloaded: {full_path}")
