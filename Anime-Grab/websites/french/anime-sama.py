@@ -55,13 +55,13 @@ class anime_sama():
     def __fetch(self,url):
          
          url = self.verify_url(url)
-         print('\n'+url)
          if url:
             if 'vostfr' in url or 'vf' in url:  
                 if self.language == 'vf' and 'vf' not in url:
                     if requests.get(url.replace('vostfr','vf')).status_code==200:
                         url = url.replace('vostfr','vf') # selects vf
-                    
+            print('\n'+url)    
+
             web = requests.get(url).text
             episode_attr = re.search('episodes\.js\?filever=\d+',web).group(0)
             url = url if url[-1]=='/' else url+'/'
@@ -117,8 +117,8 @@ class anime_sama():
         range = self.validate_range(range)
         pref_list = pref_list[range[0]:range[1]]
 
-        if folder: 
-            path = self.path+f'/{folder}'
+         
+        path = self.path+'/'+folder if folder else self.path
         
         downloader(pref_list,path=path,name=name,resolution=self.resolution)
         
