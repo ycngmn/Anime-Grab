@@ -1,5 +1,5 @@
-from extractors import *
-import requests, os, re, m3u8
+from extractors import Extract
+import requests, os, m3u8
 from tqdm import tqdm
 from urllib.parse import urlparse, unquote
 
@@ -7,32 +7,32 @@ from urllib.parse import urlparse, unquote
 def launcher(url,path,name,resolution='high'):
 
         if 'video.sibnet.ru' in url:
-            if re.match(r'^https:\/\/video\.sibnet\.ru\/shell\.php\?videoid=\d+$',url):
-                ext, nom= sibnet_extract(url)
-                nom = nom if name==None else name
-                Engine_http(ext,path=path,name=nom)
+            ini = Extract(url)
+            ext, nom= ini.extracted, ini.name
+            nom = nom if name==None else name
+            Engine_http(ext,path=path,name=nom)
 
         elif 'sendvid.com' in url: 
-            if re.match(r'^https:\/\/sendvid\.com\/embed\/[a-zA-Z0-9]+$',url):
-                ext = sendvid_extract(url)
-                Engine_http(ext,path,name=name) # name suggested
-        
+            Engine_http(Extract(url).extracted,path,name=name) # name suggested
+
         elif 'yourupload.com' in url:
-            if re.match(r'^https:\/\/www\.yourupload\.com\/embed\/[a-zA-Z0-9]+$',url):
-                ext,ref = yourupload_extract(url)
-                Engine_http(ext,path,headers={'Referer':ref},name=name)
-        
+            ini = Extract(url)
+            ext,ref = ini.extracted, ini.misc
+            Engine_http(ext,path,headers={'Referer':ref},name=name)
+
         elif 'vidmoly.to' in url:
-            if re.match(r'^https:\/\/vidmoly\.to\/embed-[a-zA-Z0-9]+\.html$',url):
-                ext,headers = vidmoly_extract(url)
-                Engine_m3u8(ext,path,headers=headers,name=name,quality=resolution)
+            ini = Extract(url)
+            ext,headers = ini.extracted, ini.misc
+            Engine_m3u8(ext,path,headers=headers,name=name,quality=resolution)
+
         elif 'vk.com' in url:
-            if re.match(r'^https:\/\/vk\.com\/video_ext\.php\?oid=\d+&id=\d+$',url):
-                ext,head = vk_extract(url,quality='high')
-                Engine_http(ext,path,name=name,headers=head)
+            ini = Extract(url,quality=resolution)
+            ext,head = ini.extracted, ini.misc
+            Engine_http(ext,path,name=name,headers=head)
+
         else:
             print('Invalid url syntax or Host not supported')
-            return None
+            
 
 def downloader(vids,path=r'./pydowns',name=None,resolution='high'):
 
