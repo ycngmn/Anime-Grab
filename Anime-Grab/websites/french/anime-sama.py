@@ -2,7 +2,7 @@ import re,requests,sys,os,time
 from typing import Literal,List
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))) # to import from grandpa directory
 from downloader import downloader
-from extractors import sibnet_extract
+from extractors import Extract
 
 
 class anime_sama():
@@ -92,6 +92,9 @@ class anime_sama():
             invalid_range_error()
 
         if isinstance(range, tuple):
+
+            if range == ():
+                return (None,None)
             a, b = range
             if isinstance(a, int):
                 if b is None and a <= self.episode_count:
@@ -133,9 +136,9 @@ class anime_sama():
         
         if mode == 'print':
             for url in pref_list:
-                print(sibnet_extract(url)[0]) 
+                print(Extract(url).extracted) 
         if mode == 'txt':
-            exts = [sibnet_extract(url)[0] for url in pref_list]
+            exts = [Extract(url).extracted for url in pref_list]
             os.makedirs(self.path,exist_ok=True)
             file = f'{self.path}/{time.time()}.txt'
             for url in exts:
@@ -144,5 +147,5 @@ class anime_sama():
             
             print(f'File generated at {file}')
         if mode == 'return':
-            exts = [sibnet_extract(url)[0] for url in pref_list]
+            exts = [Extract(url).extracted for url in pref_list]
             return exts
